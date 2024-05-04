@@ -28,17 +28,17 @@ def importPlayers2neo4j(filePath):
             data = line.strip().split(';')
             playerId = int(data[0])
             player = Node("Player",
-                        id=playerId, fisrt_name=data[1], last_name=data[2],
-                        season=data[4], age=float(data[5]), height=float(data[6]),
-                        weight=float(data[7]), country=data[8], appearances=float(data[9]),
-                        minutes=float(data[10]), position=data[11], rating=float(data[12]),
-                        shots=float(data[13]), shots_on_target=float(data[14]), goals=float(data[15]),
-                        passes=float(data[16]),  pass_accuracy=float(data[17]),
-                        key_passes=float(data[18]), assists=float(data[19]), duels=float(data[20]),
-                        duels_won=float(data[21]), interceptions=float(data[22]), successful_interceptions=float(data[23]),
-                        dribbles=float(data[24]), successful_dribbles=float(data[25]), fouls_drawn=float(data[26]),
-                        fouls_committed=float(data[27]), yellow_cards=float(data[28]), red_cards=float(data[29]),
-                        injured=data[30])
+                        id=playerId, imie=data[1], nazwisko=data[2],
+                        sezon=data[4], wiek=float(data[5]), wzrost=float(data[6]),
+                        waga=float(data[7]), panstwo=data[8], wystepy=float(data[9]),
+                        minuty=float(data[10]), pozycja=data[11], rating=float(data[12]),
+                        strzaly=float(data[13]), strzaly_celne=float(data[14]), gole=float(data[15]),
+                        podania=float(data[16]),  celnosc_podan=float(data[17]),
+                        kluczowe_podania=float(data[18]), asysty=float(data[19]), pojedynki=float(data[20]),
+                        wygrane_pojedynki=float(data[21]), przechwyty=float(data[22]), udane_przechwyty=float(data[23]),
+                        dryblingi=float(data[24]), wygrane_dryblingi=float(data[25]), faule_popelnione=float(data[26]),
+                        faule_na_zawodniku=float(data[27]), zolte_karti=float(data[28]), czerwone_kartki=float(data[29]),
+                        czy_Kontuzjowany=data[30])
             graph.create(player)
 
             teamId = int(data[3])
