@@ -2,13 +2,24 @@ from py2neo import Graph, Node, Relationship
 
 graph = Graph("bolt://localhost:7687", auth=("neo4j", "123"))
 
+def createLeagues(filePath):
+    with open(filePath, 'r') as file:
+        next(file)
+        i = 0
+        for line in file:
+            data = line.strip().split(';')
+            if not graph.nodes.match("Liga", nazwa_ligi=data[21]):
+                leagueId = i
+                i += 1
+                league = Node("Liga", id=leagueId, nazwa_ligi=data[21])
+                graph.create(league)
 def importTeams2neo4j(filePath):
     with open(filePath, 'r') as file:
         next(file)
         for line in file:
             data = line.strip().split(';')
             teamId = int(data[0])
-            team = Node("Team",
+            team = Node("Druzyna",
                         id=teamId, nazwa=data[1], sezon_rozgrywek=data[2],
                         gole_strzelone_w_domu=float(data[3]), gole_strzelone_na_wyjezdzie=float(data[4]),
                         gole_stracone_w_domu=float(data[5]), gole_stracone_na_wyjezdzie=float(data[6]),
@@ -21,13 +32,22 @@ def importTeams2neo4j(filePath):
                         remisy_na_wyjezdzie=float(data[20]))
             graph.create(team)
 
+            leagueName = data[21]
+            league = graph.nodes.match("Liga", nazwa_ligi=leagueName).first()
+
+            if league:
+                relationship = Relationship(team, "Gra_w_lidze", league)
+                graph.create(relationship)
+            else:
+                print(f"Błąd, liga o nazwie = {leagueName} nie istnieje")
+
 def importPlayers2neo4j(filePath):
     with open(filePath, 'r', encoding='utf-8') as file:
         next(file)
         for line in file:
             data = line.strip().split(';')
             playerId = int(data[0])
-            player = Node("Player",
+            player = Node("Gracz",
                         id=playerId, imie=data[1], nazwisko=data[2],
                         sezon=data[4], wiek=float(data[5]), wzrost=float(data[6]),
                         waga=float(data[7]), panstwo=data[8], wystepy=float(data[9]),
@@ -42,7 +62,7 @@ def importPlayers2neo4j(filePath):
             graph.create(player)
 
             teamId = int(data[3])
-            team = graph.nodes.match("Team", id=teamId).first()
+            team = graph.nodes.match("Druzyna", id=teamId).first()
 
             if team:
                 relationship = Relationship(player, "Gra_dla", team)
@@ -53,6 +73,6 @@ def importPlayers2neo4j(filePath):
 csvTeamPath = "druzyna.csv"
 csvPlayersPath = "pilka.csv"
 
+createLeagues(csvTeamPath)
 importTeams2neo4j(csvTeamPath)
 importPlayers2neo4j(csvPlayersPath)
-
